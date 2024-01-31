@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Auction Website</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #132653;
+            color: #fff;
+            padding: 15px;
+            text-align: left;
+            display: flex;
+            align-items: center; /* Center vertically */
+            justify-content: space-between; /* Align items to the left and right */
+        }
+
+        #logo {
+            width: 90px; /* Set the width of your logo */
+            height: auto;
+            margin-right: 10px; /* Adjust margin as needed */
+        }
+
+        nav {
+            background-color: #444;
+            overflow: hidden;
+            text-align: center; /* Center the text in the navigation bar */
+        }
+
+        nav a {
+            display: inline-block; /* Display links as blocks */
+            color: #fff;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        #welcome-message {
+            color: rgb(255, 255, 255);
+            text-align: right;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img id="logo" src="{% static 'images/gavel-icon.png' %}" alt="Logo">
+        <h1>E-Auctify</h1>
+        <div id="welcome-message">
+            {% if username %}
+                <strong>Welcome {{username}}!!!</strong>
+            {% else %}
+                <strong>Welcome Guest!!!</strong>
+            {% endif %}
+        </div>
+    </header>
+
+    <nav>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'browseauction' %}">Browse Auctions</a>
+        <a href="#categories">Categories</a>
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+        <!-- Add more navigation links as needed -->
+    </nav>
+
+    <!-- Rest of your website content goes here -->
+
+</body>
+</html>
