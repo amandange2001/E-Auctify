@@ -1,68 +1,150 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from .models import Product
+from django.db.models import Q
+
 
 # Create your views here.
-def index(req):
-    return render(req, "index.html")
-
-def browseauction(req):
-    return render(req, "browseauction.html")
-
-def mybid(req):
-    return render(req, "mybid.html")
-
-def createauction(req):
-    return render(req, "createauction.html")
-
-def login(req):
-    if req.method == "POST":
-            uname = req.POST["uname"]
-            upass = req.POST["upass"]
-            context = {}
-            if uname == "" or upass == "":
-                context["errmsg"] = "Field can't be empty"
-                return render(req, "login.html", context)
-            else:
-                username = uname
-                userdata = authenticate(username=uname, password=upass)
-                context = {"username": username}
-                if userdata is not None:
-                    login(req, userdata)
-                    return redirect("/")
-                    #return render(req, "index.html", context)
-                else:
-                    context["errmsg"] = "Invalid username and password"
-                    return render(req, "login.html", context)
+def index(request):
+    if request.user.is_authenticated:
+        user = request.user
+        allproducts = Product.objects.all()
+        context = {"username": user, "allproducts": allproducts}
+        return render(request, "index.html", context)
     else:
-            return render(req, "login.html")
+        allproducts = Product.objects.all()
+        context = {"allproducts": allproducts}
+        return render(request, "index.html", context)
+
+def browseauction(request):
+    if request.user.is_authenticated:
+        user = request.user
+        allproducts = Product.objects.all()
+        context = {"username": user, "allproducts": allproducts}
+        return render(request, "browseauction.html", context)
+    else:
+        allproducts = Product.objects.all()
+        context = {"allproducts": allproducts}
+        return render(request, "browseauction.html", context)
+    
+def searchproduct(req):
+    query = req.GET.get("q")
+    errmsg = ""
+    if query:
+        allproducts = Product.objects.filter(
+            Q(product_name__icontains=query)
+            | Q(category__icontains=query)
+            | Q(base_price__icontains=query)
+            | Q(desc__icontains=query)
+        )
+        if len(allproducts) == 0:
+            errmsg = "No result found"
+
+    else:
+        allproducts = Product.objects.all()
+
+    context = {"allproducts": allproducts, "query": query, "errmsg": errmsg}
+    return render(req, "browseauction.html", context)    
+    
+
+def createauction(request):
+    if request.user.is_authenticated:
+        user = request.user
+        context = {"username": user}
+        return render(request, "createauction.html", context)
+    else:
+        return render(request, "createauction.html")
+    
+
+def mybid(request):
+    if request.user.is_authenticated:
+        user = request.user
+        context = {"username": user}
+        return render(request, "mybid.html", context)
+    else:
+        return render(request, "mybid.html")
+    
+def myproduct(request):
+    if request.user.is_authenticated:
+        user = request.user
+        context = {"username": user}
+        return render(request, "myproduct.html", context)
+    else:
+        return render(request, "myproduct.html")    
 
 
-def register(req):
-    if req.method == "POST":
-        uname = req.POST["uname"]
-        upass = req.POST["upass"]
-        ucpass = req.POST["ucpass"]
+
+def loginuser(request):
+    if request.method == "POST":
+        uname = request.POST.get("uname")
+        upass = request.POST.get("upass")
         context = {}
-        if uname == "" or upass == "" or ucpass == "":
-            context["errmsg"] = "Field can't be empty"
-            return render(req, "register.html", context)
+        
+        if not uname or not upass:
+            context["errmsg"] = "Fields can't be empty"
+            return render(request, "login.html", context)
+        else:
+            user = authenticate(username=uname, password=upass)
+            context["username"] = uname
+            
+            if user is not None:
+                login(request, user)  # This line logs the user in
+                return redirect("/")
+            else:
+                context["errmsg"] = "Invalid username and password"
+                return render(request, "login.html", context)
+    else:
+        return render(request, "login.html")
+
+
+
+def register(request):
+    if request.method == "POST":
+        uname = request.POST.get("uname")
+        upass = request.POST.get("upass")
+        ucpass = request.POST.get("ucpass")
+        
+        context = {}
+
+        if not uname or not upass or not ucpass:
+            context["errmsg"] = "Fields can't be empty"
         elif upass != ucpass:
-            context["errmsg"] = "Password and Confirm Password doesn't match"
-            return render(req, "register.html", context)
+            context["errmsg"] = "Password and Confirm Password don't match"
         else:
             try:
-                userdata = User.objects.create(username=uname, password=upass)
-                userdata.set_password(upass)
-                userdata.save()
+                user = User.objects.create(username=uname)
+                user.set_password(upass)
+                user.save()
                 return redirect("/")
-            except Exception:
-                context["errmsg"] = "User Already Exists"
-                return render(req, "register.html", context)
+            except Exception as e:
+                context["errmsg"] = str(e)
+
+        return render(request, "register.html", context)
     else:
-        return render(req, "register.html")
+        return render(request, "register.html")
 
 
 def userlogout(req):
     logout(req)
     return redirect("/")
+
+
+def contact(request):
+    if request.user.is_authenticated:
+        user = request.user
+        context = {"username": user}
+        return render(request, "contact.html", context)
+    else:
+        return render(request, "contact.html") 
+    
+
+def aboutus(request):
+    if request.user.is_authenticated:
+        user = request.user
+        context = {"username": user}
+        return render(request, "aboutus.html", context)
+    else:
+        return render(request, "aboutus.html")     
+    
+    

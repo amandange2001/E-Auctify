@@ -22,7 +22,7 @@
 
         /* Footer Styles */
         .auction-footer {
-            background-color: #f5f5f5;
+            background-color: #132653;
             padding: 40px 0;
             margin-top: auto;
         }
@@ -40,13 +40,13 @@
         }
 
         .footer-section h4 {
-            color: #333;
+            color: #000000; 
             font-size: 18px;
             margin-bottom: 10px;
         }
 
         .footer-section p {
-            color: #666;
+            color: #fffdfd;
         }
 
         ul {
@@ -59,13 +59,13 @@
         }
 
         ul li a {
-            color: #555;
+            color: #007bff;
             text-decoration: none;
             transition: color 0.3s;
         }
 
         ul li a:hover {
-            color: #007bff;
+            color: #0056b3;
         }
 
         .social-icons {
@@ -80,13 +80,13 @@
 
         .social-icons i {
             font-size: 24px;
-            color: #007bff;
+            color: #ffffff;
         }
 
         .footer-bottom {
             margin-top: 20px;
             text-align: center;
-            color: #777;
+            color: #ffffff;
         }
 
         .footer-bottom a {
@@ -99,6 +99,7 @@
             color: #0056b3;
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
     <!-- Your website content goes here -->
@@ -113,24 +114,23 @@
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Browse Auctions</a></li>
-                    <li><a href="#">How It Works</a></li>
-                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'browseauction' %}">Browse Auctions</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
                 <h4>Customer Support</h4>
-                <p>If you have any questions or need assistance, our support team is ready to help. <a href="#">Contact us</a>.</p>
+                <p>If you have any questions or need assistance, our support team is ready to help. <a href="{% url 'contact' %}">Contact us</a>.</p>
             </div>
             
             <div class="footer-section">
                 <h4>Connect With Us</h4>
                 <ul class="social-icons">
-                    <li><a href="#" target="_blank"><i class="fab fa-facebook"></i></a></li>
-                    <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                    <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                    <li><a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook"></i></a></li>
+                    <li><a href="https://www.twitter.com" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a></li>
                     <li><a href="#" target="_blank"><i class="fab fa-linkedin"></i></a></li>
                 </ul>
             </div>

@@ -17,14 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from e_auctionapp import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.index, name="index"),
     path("browseauction/", views.browseauction, name="browseauction"),
     path("mybid/", views.mybid, name="mybid"),
+    path("myproduct/", views.myproduct, name="myproduct"),
     path("createauction/", views.createauction, name="createauction"),
-    path("login", views.login, name="login"),
+    path("login", views.loginuser, name="login"),
     path("register", views.register, name="register"),
-    path("logout", views.logout, name="logout"),
-]
+    path("userlogout", views.userlogout, name="userlogout"),
+    path("contact", views.contact, name="contact"),
+    path("aboutus", views.aboutus, name="aboutus"),
+    path("searchproduct", views.searchproduct, name="searchproduct"),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
