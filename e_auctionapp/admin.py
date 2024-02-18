@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, UpcomingProduct, ClosedProduct
+from .models import Product, Auction, Bid, ClosedProduct
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
@@ -10,15 +10,22 @@ class ProductAdmin(admin.ModelAdmin):
         "desc",
         "base_price",
         "image",
-        "time",
     ]
 
-class UpcomingProductAdmin(admin.ModelAdmin):
+class AuctionAdmin(admin.ModelAdmin):
     list_display = [
         "product",
         "start_time",
         "end_time",
         "status",
+    ]
+
+class BidAdmin(admin.ModelAdmin):
+    list_display = [
+        "product",
+        "user",
+        "amount",
+        "timestamp",
     ]
 
 class ClosedProductAdmin(admin.ModelAdmin):
@@ -31,5 +38,6 @@ class ClosedProductAdmin(admin.ModelAdmin):
     ]
 
 admin.site.register(Product, ProductAdmin)
-admin.site.register(UpcomingProduct, UpcomingProductAdmin)
+admin.site.register(Auction, AuctionAdmin)
+admin.site.register(Bid, BidAdmin)
 admin.site.register(ClosedProduct, ClosedProductAdmin)

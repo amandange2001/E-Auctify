@@ -1,0 +1,70 @@
+{% load static %}
+{% include 'header.html' %}
+
+<title>E-Auctify/product detail</title>
+<br>
+<center>
+    <h2>----- Product Detail ------</h2>
+</center>
+<br> 
+{% block content %}
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6">
+        <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="img-fluid">
+      </div>
+      <div class="col-md-6">
+        <h2>{{ product.product_name }}</h2>
+        <p>{{ product.desc }}</p>
+        <p>Price: {{ product.base_price }}</p>
+        <!-- Additional Product Information -->
+        <div class="card-body">
+          <p class="card-text">Seller: {{ product.seller }}</p>
+        </div>
+        <!-- Auction Countdown -->
+        <div class="card-body">
+          <p class="card-text">Time Left: {{ product.time_left }}</p>
+        </div>
+        <!-- Bid History -->
+        <div class="card-body">
+          <h5 class="card-title">Bid History</h5>
+          <ul>
+            {% for bid in product.bid_history %}
+              <li>{{ bid.user }} placed a bid of {{ bid.amount }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <!-- Current Bid -->
+        <div class="card-body">
+          <p class="card-text">Current Bid: {{ product.current_bid }}</p>
+        </div>
+        <!-- Auction Status -->
+        <div class="card-body">
+          <p class="card-text">Status: {{ product.auction_status }}</p>
+        </div>
+        <!-- Bidding Controls -->
+        <div class="card-body">
+          <form method="post" action="">
+            <!-- Add bidding controls here -->
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Place Bid</button>
+          </form>
+        </div>
+        <!-- Auction Terms and Conditions -->
+        <div class="auction-terms">
+          <h5>Auction Terms and Conditions</h5>
+          <!-- Add terms and conditions content here -->
+        </div>
+        <!-- Winner Announcement (display only if auction has ended) -->
+        {% if product.auction_status == 'ended' %}
+          <div class="card-body">
+            <p class="card-text">Winner: {{ product.winner }}</p>
+            <p class="card-text">Winning Bid: {{ product.winning_bid }}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+<br>
+{% include 'footer.html' %}

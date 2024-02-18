@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .models import Product
 from django.db.models import Q
+from random import sample
 
 
 # Create your views here.
@@ -10,11 +11,13 @@ def index(request):
     if request.user.is_authenticated:
         user = request.user
         allproducts = Product.objects.all()
-        context = {"username": user, "allproducts": allproducts}
+        random_products = sample(list(allproducts), 3)
+        context = {"username": user, "allproducts": allproducts, "random_products": random_products}
         return render(request, "index.html", context)
     else:
         allproducts = Product.objects.all()
-        context = {"allproducts": allproducts}
+        random_products = sample(list(allproducts), 3)
+        context = {"allproducts": allproducts, "random_products": random_products}
         return render(request, "index.html", context)
 
 def browseauction(request):
@@ -116,7 +119,7 @@ def register(request):
                 user = User.objects.create(username=uname)
                 user.set_password(upass)
                 user.save()
-                return redirect("/")
+                return redirect("/login")
             except Exception as e:
                 context["errmsg"] = str(e)
 
@@ -146,5 +149,14 @@ def aboutus(request):
         return render(request, "aboutus.html", context)
     else:
         return render(request, "aboutus.html")     
+    
+def product_detail(request, product_id):
+    if request.user.is_authenticated:
+        user = request.user
+        product = get_object_or_404(Product, product_id=product_id)
+        context = {"username": user, "product": product}
+        return render(request, "product_detail.html", context)
+    else:
+        return redirect('/login')
     
     
