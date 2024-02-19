@@ -15,6 +15,12 @@ class Product(models.Model):
     desc = models.TextField(max_length=400)
     base_price = models.FloatField()
     image = models.ImageField(upload_to="pics")
+    status_choices = (
+        ("Upcoming", "Upcoming"),
+        ("Active", "Active"),
+        ("Closed", "Closed"),
+    )
+    status = models.CharField(max_length=20, choices=status_choices, default="Active")
 
     def __str__(self):
         return self.product_name
@@ -25,10 +31,10 @@ class Auction(models.Model):
     end_time = models.DateTimeField()
     status_choices = (
         ("Upcoming", "Upcoming"),
-        ("Ongoing", "Ongoing"),
+        ("Active", "Active"),
         ("Closed", "Closed"),
     )
-    status = models.CharField(max_length=20, choices=status_choices, default="Upcoming")
+    status = models.CharField(max_length=20, choices=status_choices, default="Active")
 
     def __str__(self):
         return self.product.product_name
@@ -48,3 +54,4 @@ class ClosedProduct(models.Model):
 
     def __str__(self):
         return self.product.product_name
+        

@@ -1,0 +1,51 @@
+{% load static %}
+{% include 'header.html' %}
+
+
+<title>E-Auctify/myproduct</title>
+<div class="mt-4 bg-primary-subtle">
+    <center>
+        <h1>----- My Created Auctions -----</h1>
+    </center>
+</div>
+<br>
+{% block content %}
+  <div class="container mt-4">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Base Price</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for auction in auctions %}
+          <tr>
+            <td>{{ auction.product_name }}</td>
+            <td>{{ auction.category }}</td>
+            <td>{{ auction.desc }}</td>
+            <td>{{ auction.base_price }}</td>
+            <td>{{ auction.status }}</td>
+            <td>
+              <form method="post" action="{% url 'myauctions' %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ auction.product_id }}">
+                <select name="status">
+                  <option value="Upcoming" {% if auction.status == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+                  <option value="Active" {% if auction.status == 'Active' %}selected{% endif %}>Active</option>
+                  <option value="Closed" {% if auction.status == 'Closed' %}selected{% endif %}>Closed</option>
+                </select>
+                <button type="submit">Update Status</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+{% include 'footer.html' %}

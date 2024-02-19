@@ -14,45 +14,55 @@
         <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="img-fluid">
       </div>
       <div class="col-md-6">
-        <h2>{{ product.product_name }}</h2>
+        <h2><b>{{ product.product_name }}</b></h2>
+        <br>
         <p>{{ product.desc }}</p>
-        <p>Price: {{ product.base_price }}</p>
+        <p><b>Base Price:</b> {{ product.base_price }}</p>
         <!-- Additional Product Information -->
         <div class="card-body">
-          <p class="card-text">Seller: {{ product.seller }}</p>
+          <p class="card-text"><b>Seller:</b> {{ product.userid }}</p>
         </div>
-        <!-- Auction Countdown -->
+        <!-- Auction Status -->
         <div class="card-body">
-          <p class="card-text">Time Left: {{ product.time_left }}</p>
+          <p class="card-text"><b>Status:</b> {{ product.status }}</p>
         </div>
+        
+        <br>
         <!-- Bid History -->
+        {% if product.status == 'active' %}
         <div class="card-body">
-          <h5 class="card-title">Bid History</h5>
+          <h5 class="card-title"><b>Bid History</b></h5>
           <ul>
             {% for bid in product.bid_history %}
               <li>{{ bid.user }} placed a bid of {{ bid.amount }}</li>
             {% endfor %}
           </ul>
         </div>
+        <!-- Auction Countdown -->
+        <div class="card-body">
+          <p class="card-text"><b>Time Left:</b> {{ product.time_left }}</p>
+        </div>
         <!-- Current Bid -->
         <div class="card-body">
-          <p class="card-text">Current Bid: {{ product.current_bid }}</p>
+          <p class="card-text"><b>Current Bid:</b> {{ product.current_bid }}</p>
         </div>
-        <!-- Auction Status -->
-        <div class="card-body">
-          <p class="card-text">Status: {{ product.auction_status }}</p>
-        </div>
+        
+        
         <!-- Bidding Controls -->
         <div class="card-body">
           <form method="post" action="">
             <!-- Add bidding controls here -->
             {% csrf_token %}
+            <label for="bid_amount"><b>Your Bid:</b></label>
+            <input type="number" id="bid_amount" name="bid_amount" min="{{ product.current_bid }}" required>
             <button type="submit" class="btn btn-primary">Place Bid</button>
           </form>
         </div>
+        {% endif %}
+        <br>
         <!-- Auction Terms and Conditions -->
         <div class="auction-terms">
-          <h5>Auction Terms and Conditions</h5>
+          <h5><b>Auction Terms and Conditions</b></h5>
           <!-- Add terms and conditions content here -->
         </div>
         <!-- Winner Announcement (display only if auction has ended) -->

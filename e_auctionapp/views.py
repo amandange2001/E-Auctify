@@ -4,13 +4,15 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Product
 from django.db.models import Q
 from random import sample
+from e_auctionapp.forms import AuctionForm
+
 
 
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
         user = request.user
-        allproducts = Product.objects.all()
+        allproducts = Product.objects.exclude(userid=user)
         random_products = sample(list(allproducts), 3)
         context = {"username": user, "allproducts": allproducts, "random_products": random_products}
         return render(request, "index.html", context)
@@ -23,7 +25,7 @@ def index(request):
 def browseauction(request):
     if request.user.is_authenticated:
         user = request.user
-        allproducts = Product.objects.all()
+        allproducts = Product.objects.exclude(userid=user)
         context = {"username": user, "allproducts": allproducts}
         return render(request, "browseauction.html", context)
     else:
@@ -54,7 +56,18 @@ def searchproduct(req):
 def createauction(request):
     if request.user.is_authenticated:
         user = request.user
-        context = {"username": user}
+
+        if request.method == 'POST':
+            form = AuctionForm(request.POST, request.FILES)
+            if form.is_valid():
+                product = form.save(commit=False)
+                product.userid = user  # Set the userid to the currently logged-in user
+                product.save()
+                return redirect('myauctions')  # Redirect to a page showing the user's products or another appropriate page
+        else:
+            form = AuctionForm()
+
+        context = {"username": user, "form": form}
         return render(request, "createauction.html", context)
     else:
         return render(request, "createauction.html")
@@ -68,13 +81,23 @@ def mybid(request):
     else:
         return render(request, "mybid.html")
     
-def myproduct(request):
+def myauctions(request):
     if request.user.is_authenticated:
         user = request.user
-        context = {"username": user}
-        return render(request, "myproduct.html", context)
+        auctions = Product.objects.filter(userid=user)
+
+        if request.method == 'POST':
+            product_id = request.POST.get('product_id')
+            status = request.POST.get('status')
+
+            product = get_object_or_404(Product, pk=product_id, userid=user)
+            product.status = status
+            product.save()
+
+        context = {"username": user, "auctions": auctions}
+        return render(request, "myauctions.html", context)
     else:
-        return render(request, "myproduct.html")    
+        return redirect('/login')    
 
 
 
