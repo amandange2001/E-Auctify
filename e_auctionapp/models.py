@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta
 
 class Product(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -20,24 +22,13 @@ class Product(models.Model):
         ("Active", "Active"),
         ("Closed", "Closed"),
     )
-    status = models.CharField(max_length=20, choices=status_choices, default="Active")
+    status = models.CharField(max_length=20, choices=status_choices, default="Upcoming")
+    starttime = models.DateTimeField(default=timezone.now)
+    duration = models.DurationField(default=timedelta(hours=1))
 
     def __str__(self):
         return self.product_name
 
-class Auction(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.CASCADE, primary_key=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    status_choices = (
-        ("Upcoming", "Upcoming"),
-        ("Active", "Active"),
-        ("Closed", "Closed"),
-    )
-    status = models.CharField(max_length=20, choices=status_choices, default="Active")
-
-    def __str__(self):
-        return self.product.product_name
 
 class Bid(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

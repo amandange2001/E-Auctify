@@ -1,80 +1,98 @@
 {% load static %}
 {% include 'header.html' %}
 
-<title>E-Auctify/product detail</title>
-<br>
-<center>
-    <h2>----- Product Detail ------</h2>
-</center>
-<br> 
-{% block content %}
-  <div class="container mt-4">
-    <div class="row">
-      <div class="col-md-6">
-        <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="img-fluid">
-      </div>
-      <div class="col-md-6">
-        <h2><b>{{ product.product_name }}</b></h2>
-        <br>
-        <p>{{ product.desc }}</p>
-        <p><b>Base Price:</b> {{ product.base_price }}</p>
-        <!-- Additional Product Information -->
-        <div class="card-body">
-          <p class="card-text"><b>Seller:</b> {{ product.userid }}</p>
+  <title>E-Auctify/product detail</title>
+
+
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-primary-subtle">
+          <h1 class="text-center">----- Product Auctions -----</h1>
         </div>
-        <!-- Auction Status -->
         <div class="card-body">
-          <p class="card-text"><b>Status:</b> {{ product.status }}</p>
+          <div class="row">
+            <div class="col-md-6">
+              <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="img-fluid">
+            </div>
+            <div class="col-md-6">
+              <h2><b>{{ product.product_name }}</b></h2>
+              <p>{{ product.desc }}</p>
+              <p><b>Base Price:</b> {{ product.base_price }}</p>
+              <!-- Additional Product Information -->
+              <div class="card-body">
+                <p class="card-text"><b>Seller:</b> {{ product.userid }}</p>
+              </div>
+              <!-- Auction Status -->
+              <div class="card-body">
+                <p class="card-text"><b>Status:</b> {{ product.status }}</p>
+              </div>
+
+              <div class="card-body">
+                <p class="card-text"><b>Start Time:</b> {{ product.starttime }}</p>
+              </div>
+              <div class="card-body">
+                <p class="card-text"><b>Duration:</b> {{ product.duration }}</p>
+              </div>
+              <br>
+              <!-- Latest Bid -->
+              <div class="card-body">
+                <h5 class="card-title"><b>Latest Bid</b></h5>
+                {% if bid_history %}
+                  <p class="card-text"><b>{{ bid_history.0.user }}:</b> {{ bid_history.0.amount }} at {{ bid_history.0.timestamp }}</p>
+                {% else %}
+                  <p class="card-text"><i>No bids yet.</i></p>
+                {% endif %}
+              </div>
+              <br>
+              
+              <!-- Bidding Controls -->
+              <div class="card-body">
+                <form method="post" action="">
+                  {% csrf_token %}
+                  {% if form.errors %}
+                    <div class="alert alert-danger">
+                      <strong>Error!</strong> {{ form.errors.bid_amount.0 }}
+                    </div>
+                  {% endif %}
+                  {{ form.bid_amount.errors }}
+                  <label for="bid_amount"><b>Your Bid:</b></label>
+                  <input type="number" id="bid_amount" name="bid_amount" min="{{ product.current_bid }}" required>
+                  <button type="submit" class="btn btn-primary">Place Bid</button>
+                  <br>
+
+                  <!-- Bid History -->
+                  <div class="card-body">
+                    <h5 class="card-title"><b>Bid History</b></h5>
+                    <ul class="list-group">
+                      {% for bid in bid_history %}
+                        <li class="list-group-item">{{ bid.user }} placed a bid of {{ bid.amount }} at {{ bid.timestamp }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
         
-        <br>
-        <!-- Bid History -->
-        {% if product.status == 'active' %}
-        <div class="card-body">
-          <h5 class="card-title"><b>Bid History</b></h5>
-          <ul>
-            {% for bid in product.bid_history %}
-              <li>{{ bid.user }} placed a bid of {{ bid.amount }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        <!-- Auction Countdown -->
-        <div class="card-body">
-          <p class="card-text"><b>Time Left:</b> {{ product.time_left }}</p>
-        </div>
-        <!-- Current Bid -->
-        <div class="card-body">
-          <p class="card-text"><b>Current Bid:</b> {{ product.current_bid }}</p>
-        </div>
-        
-        
-        <!-- Bidding Controls -->
-        <div class="card-body">
-          <form method="post" action="">
-            <!-- Add bidding controls here -->
-            {% csrf_token %}
-            <label for="bid_amount"><b>Your Bid:</b></label>
-            <input type="number" id="bid_amount" name="bid_amount" min="{{ product.current_bid }}" required>
-            <button type="submit" class="btn btn-primary">Place Bid</button>
-          </form>
-        </div>
-        {% endif %}
-        <br>
-        <!-- Auction Terms and Conditions -->
-        <div class="auction-terms">
-          <h5><b>Auction Terms and Conditions</b></h5>
-          <!-- Add terms and conditions content here -->
-        </div>
-        <!-- Winner Announcement (display only if auction has ended) -->
-        {% if product.auction_status == 'ended' %}
-          <div class="card-body">
+        <div class="card-footer">
+          <!-- Auction Terms and Conditions -->
+          <div class="auction-terms">
+            <h5><b>Auction Terms and Conditions</b></h5>
+            <!-- Add terms and conditions content here -->
+          </div>
+          <!-- Winner Announcement (display only if auction has ended) -->
+          {% if product.auction_status == 'ended' %}
             <p class="card-text">Winner: {{ product.winner }}</p>
             <p class="card-text">Winning Bid: {{ product.winning_bid }}</p>
-          </div>
-        {% endif %}
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
-{% endblock %}
-<br>
+</div>
+
 {% include 'footer.html' %}

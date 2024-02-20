@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import Product
+from .models import Product, Bid
 from django.db.models import Q
 from random import sample
 from e_auctionapp.forms import AuctionForm
+from .forms import BidForm
 
 
 
@@ -173,13 +174,43 @@ def aboutus(request):
     else:
         return render(request, "aboutus.html")     
     
+
+
 def product_detail(request, product_id):
     if request.user.is_authenticated:
         user = request.user
-        product = get_object_or_404(Product, product_id=product_id)
-        context = {"username": user, "product": product}
+        product = get_object_or_404(Product, pk=product_id)
+        bid_history = Bid.objects.filter(product=product).order_by('-timestamp')[:2]
+
+        if request.method == 'POST':
+            form = BidForm(product_base_price=product.base_price, data=request.POST)
+            if form.is_valid():
+                bid_amount = form.cleaned_data['bid_amount']
+
+                # Validate bid amount
+                if not bid_history and bid_amount <= product.base_price:
+                    form.add_error('bid_amount', 'The first bid must be greater than the base price.')
+                elif bid_history and bid_amount <= bid_history[0].amount:
+                    form.add_error('bid_amount', 'Bid amount must be greater than the previous bid.')
+
+                if not form.errors:
+                    new_bid = Bid(product=product, user=user, amount=bid_amount)
+                    new_bid.save()
+                    product.current_bid = bid_amount
+                    product.save()
+                    return redirect('product_detail', product_id=product_id)
+
+        else:
+            form = BidForm(product_base_price=product.base_price)
+
+        context = {
+            "username": user,
+            "product": product,
+            "bid_history": bid_history,
+            "form": form,
+        }
+
         return render(request, "product_detail.html", context)
     else:
         return redirect('/login')
-    
     
