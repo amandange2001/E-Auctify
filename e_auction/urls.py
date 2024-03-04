@@ -24,7 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.index, name="index"),
     path("browseauction/", views.browseauction, name="browseauction"),
-    path("mybid/", views.mybid, name="mybid"),
     path("myauctions/", views.myauctions, name="myauctions"),
     path("createauction/", views.createauction, name="createauction"),
     path("login", views.loginuser, name="login"),

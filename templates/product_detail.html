@@ -49,19 +49,32 @@
               <br>
               
               <!-- Bidding Controls -->
-              <div class="card-body">
-                <form method="post" action="">
-                  {% csrf_token %}
-                  {% if form.errors %}
-                    <div class="alert alert-danger">
-                      <strong>Error!</strong> {{ form.errors.bid_amount.0 }}
-                    </div>
-                  {% endif %}
-                  {{ form.bid_amount.errors }}
-                  <label for="bid_amount"><b>Your Bid:</b></label>
-                  <input type="number" id="bid_amount" name="bid_amount" min="{{ product.current_bid }}" required>
-                  <button type="submit" class="btn btn-primary">Place Bid</button>
-                  <br>
+{% if product.status != 'Closed' %}
+<div class="card-body">
+  <form method="post" action="">
+    {% csrf_token %}
+    {% if form.errors %}
+      <div class="alert alert-danger">
+        <strong>Error!</strong> {{ form.errors.bid_amount.0 }}
+      </div>
+    {% endif %}
+    {{ form.bid_amount.errors }}
+    
+    <label for="bid_amount"><b>Your Bid:</b></label>
+    <input type="number" id="bid_amount" name="bid_amount" min="{{ product.current_bid }}" required>
+    <button type="submit" class="btn btn-primary">Place Bid</button>
+    <br>
+  </form>
+</div>
+{% endif %}
+
+{% if product.status == 'Closed' %}
+<!-- Display winner information if auction is closed -->
+<div class="card-body">
+  <p class="card-text">Winner: {{ product.closedproduct.winner }}</p>
+  <p class="card-text">Winning Bid: {{ product.closedproduct.final_price }}</p>
+</div>
+{% endif %}
 
                   <!-- Bid History -->
                   <div class="card-body">
@@ -85,10 +98,7 @@
             <!-- Add terms and conditions content here -->
           </div>
           <!-- Winner Announcement (display only if auction has ended) -->
-          {% if product.auction_status == 'ended' %}
-            <p class="card-text">Winner: {{ product.winner }}</p>
-            <p class="card-text">Winning Bid: {{ product.winning_bid }}</p>
-          {% endif %}
+          
         </div>
       </div>
     </div>

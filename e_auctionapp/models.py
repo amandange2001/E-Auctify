@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Max
 
 class Product(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -45,4 +46,15 @@ class ClosedProduct(models.Model):
 
     def __str__(self):
         return self.product.product_name
+
+    def determine_winner(self):
+        highest_bid = self.product.bid_set.aggregate(Max('amount'))['amount__max']
         
+        if highest_bid is not None:
+            winning_bid = Bid.objects.filter(product=self.product, amount=highest_bid).first()
+            if winning_bid:
+                self.winner = winning_bid.user
+                self.final_price = winning_bid.amount
+                self.is_sold = True
+                self.save()
+                

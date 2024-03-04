@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import Product, Bid
+from .models import Product, Bid, ClosedProduct
 from django.db.models import Q
 from random import sample
 from e_auctionapp.forms import AuctionForm
@@ -74,13 +74,7 @@ def createauction(request):
         return render(request, "createauction.html")
     
 
-def mybid(request):
-    if request.user.is_authenticated:
-        user = request.user
-        context = {"username": user}
-        return render(request, "mybid.html", context)
-    else:
-        return render(request, "mybid.html")
+
     
 def myauctions(request):
     if request.user.is_authenticated:
@@ -95,10 +89,15 @@ def myauctions(request):
             product.status = status
             product.save()
 
+            # Check if the auction is closed and determine the winner
+            if status == 'Closed':
+                closed_product = ClosedProduct.objects.get_or_create(product=product)[0]
+                closed_product.determine_winner()
+
         context = {"username": user, "auctions": auctions}
         return render(request, "myauctions.html", context)
     else:
-        return redirect('/login')    
+        return redirect('/login')
 
 
 
@@ -214,3 +213,4 @@ def product_detail(request, product_id):
     else:
         return redirect('/login')
     
+   
