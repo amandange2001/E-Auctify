@@ -43,7 +43,7 @@ Follow these steps to set up the E-Auctify platform locally:
 1. Clone the repository:
 ```bash
   git clone https://github.com/amandange2001/E-Auctify.git
-  cd e-auctify
+  cd e_auctify
 ```
 
 2. Configure the database:
